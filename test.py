@@ -1,41 +1,31 @@
+# prompt: write test with random data that fake streaming data with time t increase as timestamp
+
 import random
+import math
+import time
 
-#paste this test below shll class.
+from shll import SlidingHyperLogLog
 
-def CountExact(Arr):
-    cnt = 0
-    n = len(Arr)
-    for i in range(n):
-        if Arr[i] == 1:
-            cnt = cnt + 1
-    return cnt
+# Define the parameters of the Sliding HyperLogLog
+b = 3
+W = 1
 
+# Create a Sliding HyperLogLog object
+shll = SlidingHyperLogLog(b, W)
 
-H = [0 for i in range(1000000)]
+# Generate random data and add it to the shll
 t = 0
 dt = 0.01
+n = 8
+for i in range(8):
+    num = random.randint(0, 8)
+    shll.Add(num, t)
+    t += 1
 
-A = SlidingHyperLogLog(10,10000)
+print(shll.calculate_cardinality_buckets)
+# Estimate the cardinality of the data
+E = shll.EstimateCardinality(t, t)
 
-n = random.randint(50000,60000)
-
-
-for i in range(n):
-    num = random.randint(0,999999)
-    A.Add(num,t)
-    H[num] = 1
-    t = t + dt
-
-ne = CountExact(H)
-E = A.EstimateCardinality(t,t)
-error = math.fabs((ne-E))/ne * 100
-print("n = " + str(n))
-print("Actual count: " + str(ne))
-print("Estimated count: " + str(E))
-print("Percentage of error: " + str(round(error,2)) + "%")
-
-
-
-
-
-
+# Print the results
+print("n =", n)
+print("Estimated cardinality:", E)
